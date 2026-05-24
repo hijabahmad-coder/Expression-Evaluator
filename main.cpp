@@ -48,3 +48,85 @@ vector<Token> tokenize(const string& expr) {
     }
     return tokens;
 }
+vector<Token> toPostfix(const vector<Token>& tokens) {
+    vector<Token> output;
+    stack<Token> opStack;
+
+    bool expectOperand = true;   
+    for (size_t i = 0; i < tokens.size(); ++i) {
+        const Token& tok = tokens[i];
+
+        if (tok.type == NUMBER || tok.type == VARIABLE) {
+            if (!expectOperand) {
+                cerr << "Syntax error: unexpected operand '" << tok.value << "'\n";
+                exit(1);
+            }
+            output.push_back(tok);
+            expectOperand = false;
+
+        } else if (tok.type == OPEN_BRACKET) {
+            if (!expectOperand) {
+                cerr << "Syntax error: unexpected '(" << tok.value << "'\n";
+                exit(1);
+            }
+            opStack.push(tok);
+
+
+        } else if (tok.type == CLOSE_BRACKET) {
+            if (expectOperand) {
+                cerr << "Syntax error: empty or mismatched brackets\n";
+                exit(1);
+            }
+            char needed = matchingOpen(tok.value[0]);
+            bool found = false;
+            while (!opStack.empty()) {
+                Token top = opStack.top(); opStack.pop();
+                if (top.type == OPEN_BRACKET) {
+                    if (top.value[0] != needed) {
+                        cerr << "Syntax error: mismatched bracket '"
+                                  << top.value << "' closed by '" << tok.value << "'\n";
+                        exit(1);
+                    }
+                    found = true;
+                    break;
+                }
+                output.push_back(top);
+            }
+            if (!found) {
+                cerr << "Syntax error: unmatched closing bracket '" << tok.value << "'\n";
+                exit(1);
+            }
+            expectOperand = false;
+
+        } else if (tok.type == OPERATOR) {
+            if (expectOperand) {
+                cerr << "Syntax error: unexpected operator '" << tok.value << "'\n";
+                exit(1);
+            }
+            while (!opStack.empty() &&
+                   opStack.top().type == OPERATOR &&
+                   precedence(opStack.top().value) >= precedence(tok.value)) {
+                output.push_back(opStack.top());
+                opStack.pop();
+            }
+            opStack.push(tok);
+            expectOperand = true;
+        }
+    }
+
+    if (expectOperand && !tokens.empty()) {
+        cerr << "Syntax error: expression ends with an operator\n";
+        exit(1);
+    }
+    while (!opStack.empty()) {
+        Token top = opStack.top(); opStack.pop();
+        if (top.type == OPEN_BRACKET || top.type == CLOSE_BRACKET) {
+            cerr << "Syntax error: unmatched opening bracket '" << top.value << "'\n";
+            exit(1);
+        }
+        output.push_back(top);
+    }
+
+    return output;
+}
+
