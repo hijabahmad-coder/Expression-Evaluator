@@ -140,4 +140,47 @@ vector<string> collectVariables(const vector<Token>& tokens) {
     }
     return vars;
 }
+int evaluate(const vector<Token>& postfix,
+                const map<string, int>& varValues) {
+    stack<int> stk;
+
+    for (const auto& tok : postfix) {
+        if (tok.type == NUMBER) {
+            stk.push(stoi(tok.value));
+
+        } else if (tok.type == VARIABLE) {
+            auto it = varValues.find(tok.value);
+            if (it == varValues.end()) {
+                cerr << "Runtime error: no value for variable '" << tok.value << "'\n";
+                exit(2);
+            }
+            stk.push(it->second);
+
+        } else if (tok.type == OPERATOR) {
+            if (stk.size() < 2) {
+                cerr << "Runtime error: not enough operands for '" << tok.value << "'\n";
+                exit(2);
+            }
+            int b = stk.top(); stk.pop();
+            int a = stk.top(); stk.pop();
+
+            if (tok.value == "+") stk.push(a + b);
+            else if (tok.value == "-") stk.push(a - b);
+            else if (tok.value == "*") stk.push(a * b);
+            else if (tok.value == "/") {
+                if (b == 0) {
+                    cerr << "Logical error: division by zero\n";
+                    exit(3);
+                }
+                stk.push(a / b);
+            }
+        }
+    }
+
+    if (stk.size() != 1) {
+        cerr << "Runtime error: malformed expression\n";
+        exit(2);
+    }
+    return stk.top();
+}
 
