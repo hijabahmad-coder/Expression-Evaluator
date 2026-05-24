@@ -129,4 +129,15 @@ vector<Token> toPostfix(const vector<Token>& tokens) {
 
     return output;
 }
+vector<string> collectVariables(const vector<Token>& tokens) {
+    vector<string> vars;
+    set<string> seen;
+    for (const auto& t : tokens) {
+        if (t.type == VARIABLE && seen.find(t.value) == seen.end()) {
+            seen.insert(t.value);
+            vars.push_back(t.value);
+        }
+    }
+    return vars;
+}
 
