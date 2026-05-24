@@ -14,7 +14,18 @@ struct Token {
     TokenType type;
     string value;
 };
+int precedence(const string& op) {
+    if (op == "*" || op == "/") return 2;
+    if (op == "+" || op == "-") return 1;
+    return 0;
+}
 
+char matchingOpen(char close) {
+    if (close == ')') return '(';
+    if (close == ']') return '[';
+    if (close == '}') return '{';
+    return '\0';
+}
 vector<Token> tokenize(const string& expr) {
     vector<Token> tokens;
     size_t i = 0;
