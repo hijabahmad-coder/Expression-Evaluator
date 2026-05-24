@@ -45,5 +45,3 @@ a b c 2 + * +
 ## Author
 - Name: HIJAB AHMAD
 ```
-
----
