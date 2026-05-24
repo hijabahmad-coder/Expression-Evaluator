@@ -1,3 +1,13 @@
+#include <iostream>
+#include <sstream>
+#include <stack>
+#include <vector>
+#include <string>
+#include <map>
+#include <set>
+#include <cctype>
+#include <cstdlib>
+using namespace std;
 enum TokenType { NUMBER, VARIABLE, OPERATOR, OPEN_BRACKET, CLOSE_BRACKET };
 
 struct Token {
