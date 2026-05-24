@@ -183,4 +183,49 @@ int evaluate(const vector<Token>& postfix,
     }
     return stk.top();
 }
+int main() {
+    string expr;
+    getline(cin, expr);
+
+    if (expr.empty()) {
+        cerr << "Syntax error: empty expression\n";
+        return 1;
+    }
+
+    vector<Token> tokens = tokenize(expr);
+
+    if (tokens.empty()) {
+        cerr << "Syntax error: expression contains no tokens\n";
+        return 1;
+    }
+    vector<Token> postfix = toPostfix(tokens);
+
+    vector<string> vars = collectVariables(tokens);
+    map<string, int> varValues;
+
+    for (const auto& var : vars) {
+        cerr << "Enter value for " << var << ": ";
+        int val;
+        if (!(cin >> val)) {
+            cerr << "Runtime error: invalid input for variable '" << var << "'\n";
+            return 2;
+        }
+        varValues[var] = val;
+    }
+    for (size_t i = 0; i < postfix.size(); ++i) {
+        if (i) cout << " ";
+        cout << postfix[i].value;
+    }
+    cout << "\n";
+
+    int result = evaluate(postfix, varValues);
+
+    if (result == static_cast<long long>(result))
+        cout << static_cast<long long>(result) << "\n";
+    else
+        cout << result << "\n";
+
+    return 0;
+}
+
 
