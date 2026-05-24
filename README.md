@@ -1,11 +1,6 @@
 # Expression-Evaluator
 Infix to Postfix Expression Converter and Evaluator
 # 📝 README.md - Sirf README
-
----
-
-## Yeh content copy karo aur README.md mein paste kar do:
-
 ```markdown
 # DSA Assignment 1 - Expression Evaluator
 
